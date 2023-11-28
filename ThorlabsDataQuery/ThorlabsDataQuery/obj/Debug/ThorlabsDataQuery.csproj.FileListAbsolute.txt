@@ -1,0 +1,16 @@
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\bin\Debug\ThorlabsDataQuery.exe.config
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\bin\Debug\ThorlabsDataQuery.exe
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\bin\Debug\ThorlabsDataQuery.pdb
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.csproj.AssemblyReference.cache
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.csproj.SuggestedBindingRedirects.cache
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.Form1.resources
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.Properties.Resources.resources
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.csproj.GenerateResource.cache
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.csproj.CoreCompileInputs.cache
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.csproj.CopyComplete
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.exe
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\obj\Debug\ThorlabsDataQuery.pdb
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\bin\Debug\Newtonsoft.Json.dll
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\bin\Debug\Newtonsoft.Json.xml
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\bin\Debug\Thorlabs.TLBC1_32.Interop.dll
+D:\YYC\project\图像识别\ThorlabsDataQuery\ThorlabsDataQuery\bin\Debug\Thorlabs.TLBC1_32.Interop.xml

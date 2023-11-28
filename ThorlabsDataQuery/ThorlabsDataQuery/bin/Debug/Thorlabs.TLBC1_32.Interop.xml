@@ -1,0 +1,2522 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Thorlabs.TLBC1_32.Interop</name>
+    </assembly>
+    <members>
+        <member name="T:Thorlabs.TLBC1.Interop.TLBC1">
+            <summary>
+            Operate the BC1 instrument
+            </summary>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.Finalize">
+            <summary>
+            Closes the instrument and releases all resources.
+            </summary>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.#ctor(System.IntPtr)">
+            <summary>
+            This function creates an IVI instrument driver session, typically using the C session instrument handle.
+            </summary>
+            <param name="Instrument_Handle">
+            The instrument handle that is used to create an IVI instrument driver session.
+            </param>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            This function initializes the instrument driver session and performs the following initialization actions:
+            
+            (1) Opens a session to the Default Resource Manager resource and a session to the selected device using the Resource Name.
+            (2) Performs an identification query on the Instrument.
+            (3) Resets the instrument to a known state.
+            (4) Sends initialization commands to the instrument.
+            (5) Returns an instrument handle which is used to differentiate between different sessions of this instrument driver.
+            
+            Notes:
+            (1) Each time this function is invoked an unique session is opened.  
+            </summary>
+            <param name="Resource_Name">
+            This parameter specifies the device (resource) with which to establish a communication session. It is recommended to use TLBC1_get_device_information() to get the valid resource string of a device available in the system. The syntax for the resource string is shown below. Optional segments are shown in square brackets ([]). Required segments that must be filled in are denoted by angle brackets (&lt;&gt;).
+            
+            USB::0x1313::&lt;product id&gt;::&lt;serial number&gt;
+            
+            The product id codes for supported instruments are shown
+            below.
+            
+            Product ID   Instrument Type
+            -------------------------------------------------
+            0x8012       BC106 Camera Beam Profiler
+            
+            
+            Example Resource String:
+            USB::0x1313::0x8012::M12345678::RAW
+            BC106 with the serial number M12345678.
+            </param>
+            <param name="ID_Query">
+            This parameter specifies whether an identification query is performed during the initialization process.
+            VI_OFF (0): Skip query.
+            VI_ON  (1): Do query (default). 
+            </param>
+            <param name="Reset_Device">
+            Pass VI_TRUE to perform reset operation and put the instrument in a pre-defined reset state.
+            </param>
+        </member>
+        <member name="P:Thorlabs.TLBC1.Interop.TLBC1.Handle">
+            <summary>
+            Gets the instrument handle.
+            </summary>
+            <value>
+            The value is the IntPtr that represents the handle to the instrument.
+            </value>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_device_count(System.UInt32@)">
+            <summary>
+            Get the number of devices available in your system that can be controlled with this driver.
+            </summary>
+            <param name="Device_Count">
+            Receives the number of connected devices.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS              Initialization successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_device_information(System.UInt32,System.Text.StringBuilder,System.Text.StringBuilder,System.Text.StringBuilder,System.Boolean@,System.Text.StringBuilder)">
+            <summary>
+            Get identification information of a connected device.
+            You don't have to open a session with the device with TLBC1_init() before you can use this function.
+            
+            </summary>
+            <param name="Device_Index">
+            The device's index. Valid values range from 0 to (number of connected devices - 1) (see TLBC1_get_device_count()).
+            </param>
+            <param name="Manufacturer">
+            A 64 byte string buffer to receive the manufacturer name. You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Instrument_Name">
+            A 64 byte string buffer to receive the instrument/model name. You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Serial_Number">
+            A 64 byte string buffer to receive the serial number. You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Device_Available">
+            true if the device is available (not used by another program). You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Resource_Name">
+            A 256 byte string buffer to receive the ressource identification string. Use this string in function TLBC1_init().You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS              Initialization successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.self_test(System.Int16@,System.Text.StringBuilder)">
+            <summary>
+            This function runs the device self-test routine and returns the test result.
+            </summary>
+            <param name="Self_Test_Result">
+            This parameter contains the value returned from the device self test routine. A retured zero value indicates a successful run, A value other than zero indicates failure.
+            </param>
+            <param name="Self_Test_Message">
+            This parameter returns the interpreted code as an user readable message string.
+                      
+            Notes:
+            (1) The array must contain at least 256 elements ViChar[256].
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS              Self-test operation successful
+            VI_WARN_NSUP_SELF_TEST  Self-test not supported
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.reset">
+            <summary>
+            This function resets the device to a default state.
+            </summary>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS              Reset ooperation successful
+            VI_WARN_NSUP_RESET      Reset not supported
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.revision_query(System.Text.StringBuilder,System.Text.StringBuilder)">
+            <summary>
+            This function returns the revision numbers of the instrument driver and the device firmware.
+            </summary>
+            <param name="Instrument_Driver_Revision">
+            This parameter returns the Instrument Driver revision.
+                      
+            Notes:
+            (1) The array must contain at least 256 elements ViChar[256].
+            (2) You may pass VI_NULL if you do not need this value.
+            </param>
+            <param name="Firmware_Revision">
+            This parameter returns the device firmware revision.
+            
+            Notes:
+            (1) The array must contain at least 256 elements ViChar[256].
+            (2) You may pass \a VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS               Revision query successful
+            VI_WARN_NSUP_REV_QUERY   Instrument revision query not supported
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.error_query(System.Int32@,System.Text.StringBuilder)">
+            <summary>
+            This function queries the instrument's latest error code.
+            </summary>
+            <param name="Error_Code">
+            This parameter returns the instrument error number.
+            
+            Notes:
+            (1) You may pass VI_NULL if you don't need this value. 
+            </param>
+            <param name="Error_Message">
+            This parameter returns the instrument error message.
+            
+            Notes:
+            (1) The array must contain at least 256 elements ViChar[256].
+            (2) You may pass VI_NULL if you don't need this value. 
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Error query operation successful
+            VI_WARN_NSUP_ERROR_QUERY  Error query not supported
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.identification_query(System.Text.StringBuilder,System.Text.StringBuilder)">
+            <summary>
+            This function returns the device identification information.
+            </summary>
+            <param name="Instrument_Name">
+            The instrument name (e.g. "BC106-VIS").
+            
+            Notes:
+            (1) The array must contain at least 256 elements ViChar[256].
+            (2) You may pass \a VI_NULL if you don't need this value.
+            </param>
+            <param name="Serial_Number">
+            The instrument's serial number (e.g. "M01234567").
+            
+            Notes:
+            (1) The array must contain at least 256 elements ViChar[256].
+            (2) You may pass \a VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS               Revision query successful
+            VI_WARN_NSUP_REV_QUERY   Instrument identification query not supported
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_gain_range(System.Double@,System.Double@)">
+            <summary>
+            Get the gain value range supported by the instrument.
+            </summary>
+            <param name="Min_Gain">
+            Minimum gain factor.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Max_Gain">
+            Maximum gain factor.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Wavelength range query successful
+            
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_gain(System.Double@)">
+            <summary>
+            Gets the gain value.
+            </summary>
+            <param name="Gain">
+            The gain value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Gain query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_gain(System.Double)">
+            <summary>
+            Sets the gain value.
+            
+            Note:
+            (1) Setting the gain value will disable auto exposure mode.
+            </summary>
+            <param name="Gain">
+            Sets the gain. Use &lt;Get Gain Range&gt; for the supported parameter value range.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set gain operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_auto_exposure(System.Boolean@)">
+            <summary>
+            Get the auto exposure mode.
+            
+            If auto exposure mode is enabled the data of the latest image is used to calculate improved exposure settings for the next scan. On fluctuating beam intensities it is still possible to scan dark or overexposed images as the new exposure parameters are only used for the next scan.
+            If auto exposure mode is disabled the exposure parameters set with &lt;Set Exposure Time&gt; are used.
+            </summary>
+            <param name="Auto_Exposure">
+            Gets the auto exposure.
+            VI_ON  = Auto exposure is active
+            VI_OFF = Auto exposure is inactive
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Auto exposure query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_auto_exposure(System.Boolean)">
+            <summary>
+            Set the auto exposure mode.
+            
+            If auto exposure mode is enabled the data of the latest image is used to calculate improved exposure settings for the next scan. On fluctuating beam intensities it is still possible to scan dark or overexposed images as the new exposure parameters are only used for the next scan.
+            If auto exposure mode is disabled the exposure parameters set with TLBC1_set_exposure_time() are used.
+            </summary>
+            <param name="Auto_Exposure">
+            Sets the auto exposure active or inactive.
+            VI_ON  = Auto exposure is active
+            VI_OFF = Auto exposure is inactive
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS          Set auto exposure operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_exposure_time_range(System.Double@,System.Double@)">
+            <summary>
+            Get the exposure time value range supported by the instrument.
+            </summary>
+            <param name="Min_Exposure_Time">
+            Minimum exposure time in ?s.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Max_Exposure_Time">
+            Maximum exposure time in ?s.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Wavelength range query successful
+            
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_exposure_time(System.Double@)">
+            <summary>
+            Gets the exposure time.
+            </summary>
+            <param name="Exposure_Time">
+            The exposure time in ms.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Gain query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_exposure_time(System.Double)">
+            <summary>
+            Sets the exposure time.
+            
+            Calling this function will disable auto exposure mode.
+            </summary>
+            <param name="Exposure_Time">
+            The exposure time in ?s. Use &lt;Get Exposure Time Range&gt; for the supported parameter value range.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set gain operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_precision_mode(System.Byte@)">
+            <summary>
+            Get the precision mode.
+            </summary>
+            <param name="Precision_Mode">
+            Gets the Precision Mode.
+            
+            0 = Fast (with reduced intensity resolution)
+            1 = Precise (with full intensity resolution)
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Precision Mode query operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_precision_mode(System.Byte)">
+            <summary>
+            Sets the precision mode.
+            </summary>
+            <param name="Precision_Mode">
+            The precision mode.
+            
+            0 = Fast (with reduced intensity resolution)
+            1 = Precise (with full intensity resolution)
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS          Set precision mode operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_sensor_information(System.UInt16@,System.UInt16@,System.Double@,System.Double@)">
+            <summary>
+            Get information about the sensor's dimensions.
+            </summary>
+            <param name="Pixel_Count_X">
+            Count of horizontal pixel.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Pixel_Count_Y">
+            Count of vertical pixel.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Pixel_Pitch_Horizontal">
+            Distance in ?m between the left edge of each pixel to the left edge of the horizontally next pixel.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Pixel_Pitch_Vertical">
+            Distance in ?m between the top edge of each pixel to the top edge of the vertically next pixel.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS              Query of the Sensor Information successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_roi(System.UInt16@,System.UInt16@,System.UInt16@,System.UInt16@)">
+            <summary>
+            Get the rectangle of the ROI.
+            
+            The ROI (Region Of Interest) defines a rectangular subarea of the sensor area whereas the maximum ROI is the full sensor size (see TLBC1_get_sensor_information()) and the smallest 32 x 32 pixel. Only image data of the selected ROI are transmitted from the device so that narrower ROI size reduces bandwidth and therefore increases measurement speed (frames per second).
+            </summary>
+            <param name="Left">
+            Left border pixel index of the ROI rectangle.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Top">
+            Top border pixel index of the ROI rectangle.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Width">
+            Width of the ROI rectangle in pixel.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Height">
+            Height of the ROI rectangle in pixel.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS               ROI query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_roi(System.UInt16,System.UInt16,System.UInt16,System.UInt16)">
+            <summary>
+            Set the rectangle of the ROI.
+            
+            The ROI (Region Of Interest) defines a rectangular subarea of the sensor area whereas the maximum ROI is the full sensor size (see TLBC1_get_sensor_information()) and the smallest 32 x 32 pixel. Only image data of the selected ROI are transmitted from the device so that narrower ROI size reduces bandwidth and therefore increases measurement speed (frames per second).
+            
+            Notes:
+            (1) This function will coerce the passed set values to fitting values. Use TLBC1_get_roi() to read back the actual ROI rectangle after setting them.
+            (2) This function tries to retain the currently set calculation area. In case that the current calculation area doesn't fit into the new ROI the calculation area will be reset to full ROI.
+            </summary>
+            <param name="Left">
+            Sets the left border of the ROI in pixels.
+            The position of the left border has to be a multiple of 4.
+            </param>
+            <param name="Top">
+            Sets the top border of the ROI in pixels.
+            The position of the top border has to be a multiple of 4.
+            </param>
+            <param name="Width">
+            Sets the width of the ROI in pixels.
+            The width has to be a multiple of 4.
+            </param>
+            <param name="Height">
+            Sets the height of the ROI in pixels.
+            The height has to be a multiple of 4.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set clip level operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_trigger(System.UInt16@,System.Double@,System.UInt16@)">
+            <summary>
+            Get the currently set trigger parameters.
+            
+            The electrical TTL level trigger input can be used to synchronize laser pulses to the camera exposure time. By default 'No Trigger' is chosen for continuous caption of CW light sources.
+            </summary>
+            <param name="Trigger_Mode">
+            The trigger mode:
+            0 = No Trigger: The beam profiler continuously scans for images as fast as possible.
+            2 = Hardware Trigger Pulse: The beam profiler triggers on a selected edge of a TTL signal at the device's BNC connector and starts exposure after a user defined delay time.
+            3 = Hardware Trigger Repetition: The beam profiler starts exposure with a user defined frequency and phase locks on a selected edge of a TTL signal at the device's BNC connector.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Trigger_Value">
+            The meaning of this value depends on the trigger mode:
+            - In trigger mode 'No Trigger': The value is not used.
+            - In trigger mode 'Hardware Trigger Pulse': The delay in ?s from trigger to start of exposure.
+            - Hardware Trigger Repetition: Repetition frequency in kHz.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Trigger_Edge">
+            The trigger edge in the hardware trigger modes.
+            0 = Rising Edge
+            1 = Falling Edge
+            
+            The value is not used in No Trigger mode. You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Trigger Mode query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_trigger(System.UInt16,System.Double,System.UInt16)">
+            <summary>
+            Set the trigger parameters.
+            
+            The electrical TTL level trigger input can be used to synchronize laser pulses to the camera exposure time. By default 'No Trigger' is chosen for continuous caption of CW light sources.
+            </summary>
+            <param name="Trigger_Mode">
+            The trigger mode:
+            0 = No Trigger: The beam profiler continuously scans for images as fast as possible.
+            2 = Hardware Trigger Pulse: The beam profiler triggers on a selected edge of a TTL signal at the device's BNC connector and starts exposure after a user defined delay time.
+            3 = Hardware Trigger Repetition: The beam profiler starts exposure with a user defined frequency and phase locks on a selected edge of a TTL signal at the device's BNC connector.
+            </param>
+            <param name="Trigger_Value">
+            The meaning of this value depends on the trigger mode:
+            - In trigger mode 'No Trigger': The value is ignored.
+            - In trigger mode 'Hardware Trigger Pulse': The delay in ?s from trigger to start of exposure (0 ?s to 1000000 ?s).
+            - Hardware Trigger Repetition: Repetition frequency in kHz (0 kHz to 50 kHz).
+            </param>
+            <param name="Trigger_Edge">
+            The trigger edge in the hardware trigger modes.
+            0 = Rising Edge
+            1 = Falling Edge
+            
+            The value is ignored in No Trigger mode.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set trigger mode operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_ambient_light_correction_mode(System.Byte@)">
+            <summary>
+            Get the ambient light correction mode.
+            </summary>
+            <param name="Mode">
+            The ambient light correction mode.
+            
+            0 = Ambient light correction disabled. A device specific base level is used.
+            1 = Ambient light correction enabled. Measurement configuration specific base level measured by a special procedure will be used.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_ambient_light_correction_mode(System.Byte)">
+            <summary>
+            Set the ambient light correction mode.
+            
+            The ambient light correction procedure must have been run successfully before ambient light correction can be enabled.
+            See also &lt;Run Ambient Light Correction&gt; and &lt;Get Ambient Light Correction Status&gt;.
+            </summary>
+            <param name="Mode">
+            The ambient light correction mode.
+            
+            0 = Ambient light correction disabled. A device specific base level is used.
+            1 = Ambient light correction enabled. Measurement configuration specific base level measured by a special procedure will be used.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS          Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_ambient_light_correction_status(System.Byte@)">
+            <summary>
+            Get the ambient light correction data status.
+            
+            This status indicates the availability of valid ambient light correction data. The data is volatile and needs to be measured at least once after TLBC1_init(). Ambient light correction can't be enabled if there is no valid ALC data.
+            </summary>
+            <param name="Status">
+            Ambient light correction status.
+            
+            0 = Ambient light correction data availabel. ALC can be enabled.
+            1 = Ambient light correction measurement procedure was never run since TLBC1_init(). ALC can't be enabled.
+            2 = The latest ambient light correction measurement procedure failed. ALC can't be enabled.
+            
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.run_ambient_light_correction">
+            <summary>
+            Run the ambient light correction measurement.
+            
+            Block the laser beam while running this measurement. The function will block until the measurement is done. This can take up to 30 seconds.
+            </summary>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_bad_pixel_correction_support(System.Boolean@)">
+            <summary>
+            Get the bad pixel correction support information.
+            
+            Depending on the device's firmware the bad pixel correction feature is supported or not.
+            </summary>
+            <param name="Supported">
+            Support of the bad pixel correction feature.
+            
+            VI_FALSE (0) = Feature not supported.
+            VI_TRUE  (1) = Feature supported.
+            
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_bad_pixel_correction_mode(System.Boolean@)">
+            <summary>
+            Get the bad pixel correction mode.
+            </summary>
+            <param name="Enabled">
+            Mode of the bad pixel correction.
+            
+            VI_OFF (0) = Bad pixel correction disabled.
+            VI_ON  (1) = Bad pixel correction enabled.
+            
+            Notes:
+            (1) If the bad pixel correction feature is not supported by the device this parameter will always receive VI_OFF. See &lt;Get Bad Pixel Correction Support Information&gt;.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_bad_pixel_correction_mode(System.Boolean)">
+            <summary>
+            Set the bad pixel correction mode.
+            
+            This function will return an error if bad pixel correction is not supported by the device (see &lt;Get Bad Pixel Correction Support Information&gt;).
+            </summary>
+            <param name="Mode">
+            The bad pixel correction mode.
+            
+            VI_OFF (0) = Bad pixel correction disabled.
+            VI_ON  (1) = Bad pixel correction enabled.
+            
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS          Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.run_bad_pixel_correction">
+            <summary>
+            Run the bad pixel correction measurement.
+            
+            Switch off the laser and cover the camera aperture while running this measurement. The function will block until the measurement is done. This can take up to 30 seconds.
+            </summary>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Operation successful.
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_wavelength_range(System.Double@,System.Double@)">
+            <summary>
+            Gets the wavelength range supported by the instrument.
+            
+            Typical values:
+            VIS: 350 - 1100 nm
+            UV:  190 - 350  nm.
+            </summary>
+            <param name="Min_Wavelength">
+            Minimum wavelength in nm.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Max_Wavelength">
+            Maximum wavelength in nm.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Operation successful
+            
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_wavelength(System.Double@)">
+            <summary>
+            Gets the current operating wavelength.
+            </summary>
+            <param name="Wavelength">
+            Wavelength in nm.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_wavelength(System.Double)">
+            <summary>
+            Sets the current operating wavelength in nm.
+            </summary>
+            <param name="Wavelength">
+            Wavelength in nm.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_user_power_offset(System.Double@)">
+            <summary>
+            Get the user power offset used in power calculation.
+            </summary>
+            <param name="Power_Offset">
+            Gets the power offset in dBm that is set by the user. The default value is 0.0 dBm.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS            User power offset query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_user_power_offset(System.Double)">
+            <summary>
+            Sets the user power offset for power calculation.
+            </summary>
+            <param name="Power_Offset">
+            Sets the user power offset in dBm.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set cuser power offset operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_clip_level(System.Double@)">
+            <summary>
+            Get the clip level where the clipped beam width is calulated.
+            </summary>
+            <param name="Clip_Level">
+            Clip level as fraction from the peak to the base line (value range 0.05 to 0.95).
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS               Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_clip_level(System.Double)">
+            <summary>
+            Set the clip level where the clipped beam width is calulated.
+            </summary>
+            <param name="Clip_Level">
+            Clip level as fraction from the peak to the base line (value range 0.05 to 0.95).
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_attenuation(System.Double@)">
+            <summary>
+            Get the attenuation of a filter placed in front of the beam profiler camera.
+            
+            This attenuation value is used to calculate a correct power measurement value.
+            </summary>
+            <param name="Attenuation">
+            The filter attenuation in dB.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS               Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_attenuation(System.Double)">
+            <summary>
+            Set the attenuation of a filter placed in front of the beam profiler camera.
+            
+            This attenuation value is used to calculate a correct power measurement value.
+            </summary>
+            <param name="Attenuation">
+            The filter attenuation in dB.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_averaging(System.Byte@,System.UInt16@)">
+            <summary>
+            Get the averaging parameters.
+            </summary>
+            <param name="Averaging_Mode">
+            The averaging mode:
+            
+            0 = Floating Averaging: The latest measurement data is added to the stored measurement data and weightend. E.g. if the 100th measurement data arrived, it is added to the 99 other measurement data with a weightend of 1/100.
+            1 = Moving Averaging: The latest N measurement datas are summed up and averaged.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Averaging_Value">
+            The number of measurements to build the average.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS               Averaging query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_averging(System.Byte,System.UInt16)">
+            <summary>
+            Sets the average mode and the count of measurement data which build the average.
+            </summary>
+            <param name="Average_Mode">
+            The averaging mode:
+            
+            0 = Floating Averaging: The latest measurement data is added to the stored measurement data and weightend. E.g. if the 100th measurement data arrived, it is added to the 99 other measurement data with a weightend of 1/100.
+            1 = Moving Averaging: The latest N measurement datas are summed up and averaged.
+            </param>
+            <param name="Average_Value">
+            The number of measurements to build the average (value range 1 to 100).
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set averaging operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_profile_cut_position(System.Byte@,System.UInt16@,System.UInt16@,System.Double@)">
+            <summary>
+            Get the position where x and y plots are taken.
+            
+            The position defines the intersection point of two right angled cut lines in the image rectangle. The gaussian fit x and y are calculated on the resulting cut profiles along those lines.
+            </summary>
+            <param name="Position_Preset">
+            Profile position preset.
+            
+            0 = ROI Center: The center of the ROI is the position of the profile cut.
+            1 = Peak Position: The position of the highest intensity inside the calculation area is the position of the profile cut.
+            2 = Centroid Positin: The position of the centroid inside the calculation area is the position of the profile cut.
+            3 = User Position: A user defined position inside the ROI is the position of the profile cut.
+            
+            Notes:
+            (1) You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="X_Position">
+            The x pixel position of the intersection point.
+            
+            Notes:
+            (1) This parameter is only used with preset 'User Position'.
+            (2) You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Y_Position">
+            The y pixel position of the intersection point.
+            
+            Notes:
+            (1) This parameter is only used with preset 'User Position'.
+            (2) You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Rotation_Angle">
+            The rotation angle of the cut lines in degree. Postive values rotate against the clock.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS               Cut Position query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_profile_cut_position(System.Byte,System.UInt16,System.UInt16,System.Double)">
+            <summary>
+            Set the position where x and y plots are taken.
+            
+            The position defines the intersection point of two right angled cut lines in the image rectangle. The gaussian fit x and y are calculated on the resulting cut profiles along those lines.
+            </summary>
+            <param name="Position_Presets">
+            Profile position preset.
+            
+            0 = ROI Center: The center of the ROI is the position of the profile cut.
+            1 = Peak Position: The position of the highest intensity inside the calculation area is the position of the profile cut.
+            2 = Centroid Positin: The position of the centroid inside the calculation area is the position of the profile cut.
+            3 = User Position: A user defined position inside the ROI is the position of the profile cut.
+            </param>
+            <param name="X_Position">
+            The x pixel position of the intersection point.
+            
+            Notes:
+            (1) This parameter is only used with preset 'User Position'.
+            </param>
+            <param name="Y_Position">
+            The y pixel position of the intersection point.
+            
+            Notes:
+            (1) This parameter is only used with preset 'User Position'.
+            </param>
+            <param name="Rotation_Angle">
+            The rotation angle of the cut lines in degree. Postive values rotate against the clock.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set cut position operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_calculation_area_mode(System.Boolean@,System.Byte@)">
+            <summary>
+            Get the method for determining the calculation area.
+            </summary>
+            <param name="Automatic">
+            The calculation mode
+            
+            VI_ON  = Automatic - The driver tries to automatically find a good calculation area for each image. It uses the form     parameter and the clip level set in &lt;Set Auto Calculation Area Clip Level&gt; as 							parameters.\n
+            
+            VI_OFF = User defined - The user defined rectangle/ellipse (dimensions defined in &lt;Set User Calculation Area&gt;) according to &lt;form&gt; 							is used as calculation area.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Form">
+            The form of the calculation area. 
+            Rectangle = 0
+            Ellipse   = 1
+            
+            You may pass \a VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS      Calculation area query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_calculation_area_mode(System.Boolean,System.Byte)">
+            <summary>
+            Select the method for determining the calculation area.
+            </summary>
+            <param name="Automatic_Calculation">
+            The calculation mode
+            
+            VI_ON  = Automatic - The driver tries to automatically find a good calculation area for each image. It uses the form     parameter and the clip level set in &lt;Set Auto Calculation Area Clip Level&gt; as 							parameters.\n
+            
+            VI_OFF = User defined - The user defined rectangle/ellipse (dimensions defined in &lt;Set User Calculation Area&gt;) according to &lt;form&gt; is used as calculation area.
+            </param>
+            <param name="Form">
+            The form of the calculation area. 
+            Rectangle = 0
+            Ellipse   = 1
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Set calculation area operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_user_calculation_area(System.Double@,System.Double@,System.Double@,System.Double@,System.Double@)">
+            <summary>
+            Get the geometry of the user defined calculation area.
+            
+            These parameters only have effect on the calculation results if the calculation area mode is set to user defined.
+            </summary>
+            <param name="Center_X_Position">
+            Horizontal calculation area center pixel position.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Center_Y_Position">
+            Vertical calculation area center pixel position.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Width">
+            Width of the calculation area in pixels before rotating by the angle.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Height">
+            Height of the calculation area in pixels before rotating by angle.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Angle">
+            The calculation area rotation angle in degree.
+            
+            The rectangle/ellipse defined by centerX, centerY, width, and height will be rotated by this angle. Positive values rotate against the clock.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS      Calculation area query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_user_calculation_area(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Set the geometry of the user defined calculation area.
+            
+            These parameters only have effect on the calculation results if the calculation area mode is set to user defined.
+            </summary>
+            <param name="Center_X_Position">
+            Horizontal calculation area center pixel position.
+            </param>
+            <param name="Center_Y_Position">
+            Vertical calculation area center pixel position.
+            </param>
+            <param name="Width">
+            Width of the calculation area in pixels before rotating by the angle.
+            </param>
+            <param name="Height">
+            Height of the calculation area in pixels before rotating by the angle.
+            </param>
+            <param name="Angle">
+            The calculation area rotation angle in degree. The rectangle/ellipse defined by left, top, width, and height will be rotated by this angle. Positive values rotate against the clock.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Set calculation area operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_auto_calculation_area_clip_level(System.Double@)">
+            <summary>
+            Get the automatic calculation area clip level.
+            
+            This clip level is used when automatically determining a calculation area. The parameter only has an effect on the calculation results if the calculation area mode is set to automatic.
+            </summary>
+            <param name="Automatic_Clip_Level">
+            The clip level as fraction of the current image's peak intensity.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS      Calculation area query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_auto_calculation_area_clip_level(System.Double)">
+            <summary>
+            Sets the geometry for the calculation area.
+            </summary>
+            <param name="Automatic_Clip_Level">
+            Sets the percentage of intensities that are inside the calculation area. Range 0.0 to 1.0.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS         Set calculation area operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_intensity_threshold(System.Boolean@,System.Double@)">
+            <summary>
+            Get the threshold of the calculation area. 
+            The threshold is a percentage value between the highest possible intensity value (100%) and the baseline.
+            
+            pixel intensities below this threshold are not taken into account in the calculation.
+            </summary>
+            <param name="Use_Threshold">
+            
+            </param>
+            <param name="Threshold">
+            The threshold is a percentage value between the highest possible intensity value (100%) and the baseline.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS            User power offset query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_intensity_threshold(System.Boolean,System.Double)">
+            <summary>
+            Set the threshold of the calculation area. 
+            The threshold is a percentage value between the highest possible intensity value (100%) and the baseline.
+            
+            pixel intensities below this threshold are not taken into account in the calculation.
+            </summary>
+            <param name="Use_Threshold">
+            
+            </param>
+            <param name="Threshold">
+            The threshold is a percentage value between the highest possible intensity value (100%) and the baseline.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS            User power offset query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_max_hold(System.Boolean@)">
+            <summary>
+            Returns the max hold status.
+            The max hold function holds the highest intensities over all frames and you get a envelope.
+            </summary>
+            <param name="Max_Hold">
+            Gets the status of max hold.
+            VI_ON  = Max hold is active
+            VI_OFF = Max hold is inactive
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS          Max hold query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_max_hold(System.Boolean)">
+            <summary>
+            Sets the max hold function active or inactive.
+            </summary>
+            <param name="Max_Hold">
+            Enable or disable the max hold function.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set max hold operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_ellipse_mode(System.Byte@)">
+            <summary>
+            Returns the method how the ellipse is calculated.
+            </summary>
+            <param name="Mode">
+            Gets the status of approximate ellipse
+            0 = Contour of the clip level intensities
+            1 = Approximated countour
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS    Use approximate ellipse query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_ellipse_mode(System.Byte)">
+            <summary>
+            Set the method how to calculate the ellipse.
+            </summary>
+            <param name="Mode">
+            The method how the ellipse is calculated.
+            
+            0 = Clip level contour is directly used to determine length and orientation of the major and minor axis.
+            1 = An ellipse approximation algorithm is used on the clip level contour.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Set the use of the approximate ellipse operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_rotation_angle(System.Double@)">
+            <summary>
+            Returns the rotation angle for the ellipse calculation area in the m2 measurement.
+            </summary>
+            <param name="Rotation_Angle">
+            Gets the rotation angle in degree ( 0 ... 360)
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS           Rotation Angle query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_rotation_angle(System.Double)">
+            <summary>
+            Sets the rotation angle for the ellipse calculation area in the m2 measurement.
+            </summary>
+            <param name="Rotation_Angle">
+            Sets the rotation angle in degree ( 0 ... 360)
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS          Setting the Rotation Angle successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_measurement_method(System.Byte@)">
+            <summary>
+            Get the measurement method.
+            </summary>
+            <param name="Method">
+            The measurement method.
+            0 = Full image camera beam profiler
+            1 = Emulated slit beam profiler
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS    Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.set_measurement_method(System.Byte)">
+            <summary>
+            Set the measurement method.
+            
+            The camera beam profiler can emulate a slit beam profiler. This can be useful to compare slit beam profiler measurements with the camera beam profiler's measurements.
+            </summary>
+            <param name="Method">
+            The measurement method.
+            0 = Full image camera beam profiler (default)
+            1 = Emulated slit beam profiler
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS                Operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_scan_data(Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations@)">
+            <summary>
+            This function reads out one image from the beam profiler camera according to the current acquisition parameters (see configuration functions).
+            That image is immediately analysed according to the current image analye parameters (see calculation functions).
+            The image and all analyze results are saved into the ScanData passed by reference.
+            </summary>
+            <param name="ScanData">
+            Receives the all in one scan data including analysis                         results.
+            </param>
+            <returns>
+            This is the error code returned by the function call. For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.request_new_measurement">
+            <summary>
+            This function reads out a new image from the camera and does the calculations. The calculations are internally stored and can be get with the get_XXXX functions. 
+            </summary>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_image(System.Byte[],System.UInt16@,System.UInt16@,System.Byte@)">
+            <summary>
+            This function reads out the processed scan data. 
+            </summary>
+            <param name="Pixel_Data">
+            Buffer with a size of 1360*1024*2 bytes.
+            The pixel data will be copied into this buffer.
+            </param>
+            <param name="Image_Width">
+            Vertical count of pixel. Maximal 1360.
+            </param>
+            <param name="Image_Height">
+            Horizontal count of pixel. Maximal 1024.
+            </param>
+            <param name="Bytes_per_Pixel">
+            Bytes per pixel ( 1 byte in Fast Mode, 2 bytes in precision mode)
+            </param>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_baseLevel(System.Double@)">
+            <summary>
+            Returns the base level in digits
+            </summary>
+            <param name="Base_Level">
+            Base Level in digits
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_profiles(System.Double[],System.Double[])">
+            <summary>
+            This function copies the profile data into the given buffer.
+            </summary>
+            <param name="Profile_X">
+            Buffer with a size of 1360*2 bytes.
+            The pixel data will be copied into this buffer.
+            </param>
+            <param name="Profile_Y">
+            Buffer with a size of 1024*2 bytes.
+            The pixel data will be copied into this buffer.
+            </param>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_peak(System.UInt16@,System.UInt16@,System.UInt16@)">
+            <summary>
+            This function returns the peak intensity pixel position relative to the top left corner of the image (0; 0).
+            The peak intensity pixel has the highest intensity of all pixels inside the calculation area.
+            
+            </summary>
+            <param name="Peak_Intensity">
+            Intensity in digits of the pixel.
+            Maximal 4096 in precision mode and 255 in fast mode.
+            </param>
+            <param name="Peak_Position_X">
+            Index of the highest pixel in vertical direction.
+            </param>
+            <param name="Peak_Position_Y">
+            Index of the highest pixel in horizontal direction.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Get Peak operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_saturation(System.Double@,System.Double@)">
+            <summary>
+            Get the saturation level.
+            
+            Saturation level of the instrument's AD converter for the current image. For a good SNR (signal-to-noise ratio), the saturation level should be not below 40 % and not beyond 95 %.
+            </summary>
+            <param name="Saturation">
+            The saturation level is the ratio of the highest intensity in the scan to the dynamic range of the sensor. (Value range 0.0 ... 1.0)
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Saturated_Pixel">
+            Ratio of the amount of saturated pixels to amount of pixels inside the calculation area (value range 0.0 ... 1.0).
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_centroid(System.Double@,System.Double@)">
+            <summary>
+            This function returns the centroid pixel position relative to the top left corner of the image (0; 0).
+            </summary>
+            <param name="Centroid_Position_X">
+            Index of the centroid pixel in vertical direction.
+            </param>
+            <param name="Centroid_Position_Y">
+            Index of the centroid pixel in horizontal direction.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Get Centroid operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_power(System.Double@)">
+            <summary>
+            This function returns the power value in dBm.
+            </summary>
+            <param name="Total_Power">
+            Returns the total power in dBm.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Get Power operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_peak_power_density(System.Double@)">
+            <summary>
+            Get the measured peak power density. That is the power on the peak pixel divided by its area.
+            </summary>
+            <param name="Peak_Power_Density">
+            The peak power density in mW/?m?.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_beam_width(System.Double@,System.Double@,System.Double@,System.Double@)">
+            <summary>
+            This function returns the measured beam width.
+            </summary>
+            <param name="Beam_Width_Clip_X">
+            Beam Width Clip is measured from the peak down to the clip level .
+            </param>
+            <param name="Beam_Width_Clip_Y">
+            Beam Width Clip is measured from the peak down to the clip level .
+            </param>
+            <param name="Sigma_X">
+            Second Moment
+            </param>
+            <param name="Sigma_Y">
+            Second Moment in y direction.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Get Beam Width operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_beam_width_4_sigma(System.Double@,System.Double@,System.Double@,System.Double@,System.Double@,System.Double@)">
+            <summary>
+            This function returns the measured beam width 4 sigma values.
+            </summary>
+            <param name="Beam_Width__4_Sigma__X">
+            Beam Width 4 sigma value (  = second moment multiplied by 4) in x direction
+            
+            </param>
+            <param name="Beam_Width__4_Sigma__Y">
+            Beam Width 4 sigma value (  = second moment multiplied by 4) in y direction
+            
+            </param>
+            <param name="Beam_Width__4_Sigma__X_">
+            Beam Width 4 sigma value (= second moment multiplied by 4) in x' direction ( rotated and normalized coordinate system)
+            
+            </param>
+            <param name="Beam_Width__4_Sigma__Y_">
+            Beam Width 4 sigma value (= second moment multiplied by 4) in y' direction ( rotated and normalized coordinate system)
+            
+            </param>
+            <param name="Azimuth_Angle__4_Sigma_">
+            Angle between the original coordinate system (x and y ) and the rotated coordinate system (x' and y')
+            </param>
+            <param name="Ellipticity__4_Sigma_">
+            Ellipticity of the beam calculated from the second moments
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Get Beam Width operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_gaussian(System.Double@,System.Double@,System.Double@,System.Double@)">
+            <summary>
+            This function returns the gaussian fit parameter
+            </summary>
+            <param name="Intensity_X">
+            
+            </param>
+            <param name="Intensity_Y">
+            
+            </param>
+            <param name="Diameter_X">
+            Second Moment
+            </param>
+            <param name="Diameter_Y">
+            Second Moment in y direction.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Get Beam Width operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_actual_calculation_area(System.Double@,System.Double@,System.Double@,System.Double@,System.Double@)">
+            <summary>
+            Get the geometry of the actually used calculation area.
+            
+            If calculation area mode is 'user defined' this function will return the same data as was set in &lt;Set User Calculation Area&gt;.
+            If calculation area mode is 'auto' this function will return the automatically found geometry. For the form see &lt;Set Calculation Area Mode&gt;.
+            </summary>
+            <param name="Center_X_Position">
+            Horizontal calculation area center pixel position.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Center_Y_Position">
+            Vertical calculation area center pixel position.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Width">
+            Width of the calculation area in pixels before rotating by the angle.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Height">
+            Height of the calculation area in pixels before rotating by angle.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <param name="Angle">
+            The calculation area rotation angle in degree.
+            
+            The rectangle/ellipse defined by centerX, centerY, width, and height will be rotated by this angle. Positive values rotate against the clock.
+            
+            You may pass VI_NULL if you don't need this value.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS      Calculation area query operation successful
+            
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_ellipse_diameters(System.Double@,System.Double@,System.Double@)">
+            <summary>
+            Get the calculated ellipse diameters.
+            </summary>
+            <param name="Minor_Axis_Diameter">
+            Ellipse minor axis diameter in [pixel].
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <param name="Major_Axis_Diameter">
+            Ellipse major axis diameter in [pixel].
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <param name="Mean_Diameter">
+            Ellipse diameter arithmetic mean value in [pixel].
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_ellipse_geometry(System.Double@,System.Double@,System.Double@,System.Double@,System.Double@)">
+            <summary>
+            Get the calculated ellipse geometry.
+            </summary>
+            <param name="Orientation">
+            Ellipse orientation angle in degree.
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <param name="Ellipticity">
+            The ellipse's ratio of minor axis diameter to major axis diameter.
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <param name="Eccentricity">
+            The ellipse's eccentricity.
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <param name="Center_X_Position">
+            Ellipse center x pixel position.
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <param name="Center_Y_Position">
+            Ellipse center y pixel position.
+            
+            You may pass VI_NULL if this parameter is not required.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_effective_area(System.Double@)">
+            <summary>
+            Get the effective area.
+            </summary>
+            <param name="Effective_Area">
+            Area of an ideal flat top beam with same peak intensity as the measured beam in ?m?.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.get_temperature(System.Double@)">
+            <summary>
+            Get the temperature near the camera sensor in Celsius Degrees.
+            </summary>
+            <param name="Temperature">
+            The camera sensor temperature in Celsius Degrees.
+            </param>
+            <returns>
+            Operational return status. Contains either a completion code or an error code. Instrument driver specific codes that may be returned in addition to the VISA error codes defined in VPP-4.3 and vendor specific codes, are as follows.
+            
+            Completition Codes
+            ----------------------------------------------------------------
+            VI_SUCCESS       Operation successful
+            
+            Vendor Specific Codes
+            ----------------------------------------------------------------
+            For error codes and descriptions see &lt;Error Message&gt;.
+            </returns>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.Dispose">
+            <summary>
+            Closes the instrument and releases all resources.
+            </summary>
+        </member>
+        <member name="M:Thorlabs.TLBC1.Interop.TLBC1.PInvoke.get_scan_data_ptr(System.Runtime.InteropServices.HandleRef,System.IntPtr)">
+                         * Doesn't work anylonger. Structures Memory Layout is to large!             
+                        [DllImport("TLBC1_32.dll", EntryPoint = "TLBC1_get_scan_data", CallingConvention = CallingConvention.StdCall)]
+                        public static extern int get_scan_data(System.Runtime.InteropServices.HandleRef Instrument_Handle, out TLBC1_calculations ScanData);
+        </member>
+        <member name="T:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations">
+            <summary>
+            structure to handle the calculation results of a measurement
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.IsValid">
+            <summary>
+            \a VI_TRUE if scan analysis results are valid; \a VI_FALSE if an error occurred during analysis and the calculations data is invalid.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.BaseLevel">
+            <summary>
+            Mean noise of the sensor in [digits] (typically 47 digits for 12 bit images and 3 digits for 8 bit images) 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.LightShieldedPixelMeanIntensity">
+            <summary>
+            Mean intensity of the light shielded pixels ( if option is activated for TSI BC2xx cameras)
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.MinIntensity">
+            <summary>
+            Minimum intensity of the measurement. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.MaxIntensity">
+            <summary>
+            Pixel intensity value for maximum intensity / resolution of the pixel intensities. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.Saturation">
+            <summary>
+            Ratio of the highest intensity in the scan to the dynamic range of the sensor.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.SaturatedPixel">
+            <summary>
+            Percentage of saturated pixel inside the calculation area.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ImageWidth">
+            <summary>
+            Pixel per horizontal line.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ImageHeight">
+            <summary>
+            Pixel per vertical column.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.PeakPositionX">
+            <summary>
+            Peak x pixel position.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.PeakPositionY">
+            <summary>
+            Peak y pixel position.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.PeakIntensity">
+            <summary>
+            Highest pixel intensity value inside the calculation area.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CentroidPositionX">
+            <summary>
+            Centroid x pixel position.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CentroidPositionY">
+            <summary>
+            Centroid y pixel position.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.FourSigmaX">
+            <summary>
+            Horizontal standard deviation in pixel.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.FourSigmaY">
+            <summary>
+            Vertical standard deviation in pixel.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.FourSigmaR">
+            <summary>
+            Radial standard deviation in pixel. ("generalized beam diameter" from ISO 11146-2) 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.BeamWidthIsoX">
+            <summary>
+            Beam with x measured by the ISO 11146-2 along one axis of the beam profile. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.BeamWidthIsoY">
+            <summary>
+            Beam with y measured by the ISO 11146-2 along one axis of the beam profile prependicular to the beam width x.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.BeamWidthIsoXSimple">
+            <summary>
+            Beam with x measured by the ISO 11146-2 for round profiles with ellipticity > 87%
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.BeamWidthIsoYSimple">
+            <summary>
+            Beam with y measured by the ISO 11146-2 for round profiles with ellipticity > 87% along one axis of the beam profile prependicular to the beam width x.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipticityIso">
+            <summary>
+            Ellipticity of the beam witdh by the ISO 11146-2  
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.AzimuthAngle">
+            <summary>
+            Azimuth angle measured clockwise by the ISO 11146-2. The angle i between the x axis of the laboratory system and that of the principal axis which is cloder to the x-axis
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseDiaMin">
+            <summary>
+            Ellipse minor axis diameter in pixel.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseDiaMax">
+            <summary>
+            Ellipse major axis diameter in pixel.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseDiaMean">
+            <summary>
+            Ellipse diameter arithmetic mean value in pixel.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseOrientation">
+            <summary>
+            Ellipse orientation angle in degree.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseEllipticity">
+            <summary>
+            The ellipse's ratio of minor axis diameter to major axis diameter
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseEccentricity">
+            <summary>
+            The ellipse's eccentricity.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseCenterX">
+            <summary>
+            Ellipse center x pixel position.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseCenterY">
+            <summary>
+            Ellipse center y pixel position.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseFitAmplitude">
+            <summary>
+            Ellipse amplitude in Fourier fit (in digits).
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.RotAngleEllipseX">
+            <summary>
+            Ellipse angle between the current angle and the fixed angle set by 'TLBC1_set_rotation_angle'
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.RotAngleEllipseY">
+            <summary>
+            Ellipse angle between the current angle and the fixed angle set by 'TLBC1_set_rotation_angle' in y direction
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseWidthIsoX">
+            <summary>
+            Ellipse width measured by ISO norm
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EllipseWidthIsoY">
+            <summary>
+            Ellipse width measured by ISO norm in y direction
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.TotalPower">
+            <summary>
+            Total power in dBm
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.PeakPowerDensity">
+            <summary>
+            Peak power density in mW/µm² 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.BeamWidthClipX">
+            <summary>
+            Horizontal beam width at clip level in pixel
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.BeamWidthClipY">
+            <summary>
+            Vertical beam width at clip level in pixel
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.GaussianFitCentroidPositionX">
+            <summary>
+            Centroid x pixel position for the gaussian profile.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.GaussianFitCentroidPositionY">
+            <summary>
+            Centroid y pixel position for the gaussian profile. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.GaussianFitRatingX">
+            <summary>
+            Ratio of actual data to the gaussian fit of the x profile. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.GaussianFitRatingY">
+            <summary>
+            Ratio of actual data to the gaussian fit of the y profile. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.GaussianFitDiameterX">
+             <summary>
+            Diameter for the profile X centroid 
+             </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.GaussianFitDiameterY">
+            <summary>
+            Diameter for the profile Y centroid  
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CalcAreaCenterX">
+            <summary>
+            Calculation area left border. The specified pixel colum is included to the calculation area.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CalcAreaCenterY">
+            <summary>
+            Calculation area right border. The specified pixel colum is included to the calculation area.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CalcAreaWidth">
+            <summary>
+            Calculation area width.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CalcAreaHeight">
+            <summary>
+            Calculation area height.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CalcAreaAngle">
+             <summary>
+            Calculation area rotation angle in degree. The rectangle/ellipse defined by \ref calcAreaLeft, \ref calcAreaTop, \ref calcAreaRight, and \ref calcAreaBottom will be rotated by this angle. Positive values rotate against the clock.
+             </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.CalcAreaLineOffset">
+             <summary>
+            pixel inside the calculation area per line
+             </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfileValuesX">
+            <summary>
+            Intensity profile values along the x axis. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfileValuesY">
+            <summary>
+            Intensity profile values along the y axis. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfilePositionsX">
+            <summary>
+            Intensity profile position values along the x axis. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfilePositionsY">
+            <summary>
+            Intensity profile position values along the y axis. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfilePeakValueX">
+            <summary>
+            Peak intensity value in the x profile. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfilePeakValueY">
+            <summary>
+            Peak intensity value in the y profile. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfilePeakPosX">
+            <summary>
+            Intensity profile peak x pixel position. 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.ProfilePeakPosY">
+            <summary>
+            Intensity profile peak y pixel position.
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EffectiveArea">
+            <summary>
+            Area of an ideal flat top beam with same peak intensity in µm². 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.EffectiveBeamDiameter">
+            <summary>
+            Effective Beam Diameter
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calculations.Temperature">
+            <summary>
+            Temperature inside the camera in Celsius degrees.
+            </summary>
+        </member>
+        <member name="T:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource">
+            <summary>
+            structure to handle the calculation results of a measurement
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource.DeviceAvailable">
+            <summary>
+            is the device already used? VI_FALSE = used, VI_TRUE = available 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource.DeviceIndex">
+            <summary>
+            index of the device in the device list
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource.DeviceSRN">
+            <summary>
+            index of the device in the device list
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource.DeviceName">
+            <summary>
+            model name of the device 
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource.SerialNumber">
+            <summary>
+            Thorlabs serial number (e.g. M01234567)  
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource.ResourceString">
+            <summary>
+            9 bytes device identification string
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_resource.DeviceType">
+            <summary>
+            model of the camera pending on the chip type and wavelength 
+            </summary>
+        </member>
+        <member name="T:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area">
+            <summary>
+            structure to hold the calculation area information
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.Mode">
+            <summary>
+            Mode
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.Form">
+            <summary>
+            Form
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.CenterX">
+            <summary>
+            Center Point X
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.CenterY">
+            <summary>
+            Center Point X
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.Width">
+            <summary>
+            Width
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.Height">
+            <summary>
+            Height
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.Angle">
+            <summary>
+            Angle
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_calc_area.ClipLevel">
+            <summary>
+            Clip Level
+            </summary>
+        </member>
+        <member name="T:Thorlabs.TLBC1.Interop.Structs.TLBC1_profile_cut">
+            <summary>
+            structure to hold the profile cut information
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_profile_cut.Preset">
+            <summary>
+            Preset
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_profile_cut.PositonX">
+            <summary>
+            Position Point X
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_profile_cut.PositonY">
+            <summary>
+            Position Point Y
+            </summary>
+        </member>
+        <member name="F:Thorlabs.TLBC1.Interop.Structs.TLBC1_profile_cut.Angle">
+            <summary>
+            Angle
+            </summary>
+        </member>
+    </members>
+</doc>
